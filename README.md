@@ -45,7 +45,7 @@ For manual installation:
 3. Reload Obsidian and enable **Window Title** in Community plugins.
 4. Open **Settings → Window Title** to edit the format.
 
-For a local build, copy the generated `dist/window-title` folder into `<vault>/.obsidian/plugins/`. The plugin has not been submitted to the community directory.
+For a local build, copy the generated `dist/window-title` folder into `<vault>/.obsidian/plugins/`.
 
 ## Scope and compatibility
 
