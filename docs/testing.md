@@ -6,7 +6,7 @@ Version 0.1.0 was checked on 2026-09-11 with Obsidian 1.13.7 (installer 1.13.7),
 
 `npm run package` passed Obsidian ESLint rules, TypeScript checking, 20 unit tests, the production build, and bundle/package assertions. The runtime harness passed 32 checks, the editor harness passed 10 checks, and a separate vault-renderer reload retained the saved custom format and native title.
 
-Linux and Windows are intended targets. Native Obsidian execution on those platforms has not been verified. The three-platform CI matrix is defined but has not run remotely. Community directory review and publication have not occurred.
+Linux and Windows are intended targets. Native Obsidian execution on those platforms has not been verified. The source/test/package CI matrix passed on Ubuntu, macOS, and Windows for commit `32c6e36` ([run](https://github.com/igorhajduk/obsidian-window-title/actions/runs/34622003272)). CI does not run desktop Obsidian. Community directory review and release publication have not occurred.
 
 ## Coverage
 
