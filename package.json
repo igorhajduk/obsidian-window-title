@@ -1,0 +1,39 @@
+{
+  "name": "obsidian-window-title",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Compose the window title with vault, tab, file, path, and frontmatter elements.",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/igorhajduk/obsidian-window-title.git" },
+  "bugs": { "url": "https://github.com/igorhajduk/obsidian-window-title/issues" },
+  "homepage": "https://github.com/igorhajduk/obsidian-window-title#readme",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "build": "npm run typecheck && node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src manifest.json LICENSE --max-warnings=0",
+    "test": "tsx --test tests/*.test.ts",
+    "check": "npm run lint && npm test && npm run build",
+    "package": "npm run check && node scripts/package.mjs",
+    "lab:prepare": "npm run build && node scripts/prepare-lab.mjs",
+    "lab:spike": "node scripts/title-spike.mjs",
+    "lab:test": "node scripts/runtime-test.mjs"
+  },
+  "devDependencies": {
+    "@codemirror/state": "6.5.0",
+    "@codemirror/view": "6.38.6",
+    "@types/node": "22.20.1",
+    "esbuild": "0.28.2",
+    "obsidian": "1.13.1",
+    "tsx": "4.23.13",
+    "typescript": "5.9.3",
+    "@eslint/js": "9.39.5",
+    "@eslint/json": "0.14.0",
+    "eslint": "10.10.0",
+    "eslint-plugin-obsidianmd": "0.4.2",
+    "globals": "17.12.0",
+    "typescript-eslint": "8.70.0"
+  },
+  "overrides": { "eslint-plugin-obsidianmd": { "obsidian": "$obsidian" } }
+}

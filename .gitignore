@@ -1,0 +1,7 @@
+node_modules/
+main.js
+dist/
+.lab/
+test-results/
+coverage/
+.DS_Store

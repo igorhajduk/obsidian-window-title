@@ -1,0 +1,9 @@
+{
+  "id": "window-title",
+  "name": "Window Title",
+  "version": "0.1.0",
+  "minAppVersion": "1.13.7",
+  "description": "Compose window titles with a visual builder, text templates, and frontmatter properties.",
+  "author": "gorky",
+  "isDesktopOnly": true
+}
