@@ -38,7 +38,7 @@ An unfinished or invalid template stays in the editor with an explanation. The b
 
 ## Installation
 
-Requires desktop Obsidian 1.13.7 or later. The plugin targets macOS, Linux, and Windows. Native behavior is verified separately from source/build compatibility; see [testing](docs/testing.md) for current coverage.
+Requires desktop Obsidian 1.13.0 or later. The plugin targets macOS, Linux, and Windows. Native behavior is verified separately from source/build compatibility; see [testing](docs/testing.md) for current coverage.
 
 For manual installation:
 

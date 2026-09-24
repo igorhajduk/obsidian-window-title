@@ -1,6 +1,6 @@
 {
   "name": "obsidian-window-title",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Compose the window title with vault, tab, file, path, and frontmatter elements.",
   "license": "MIT",

@@ -53,3 +53,9 @@ Generated local evidence is stored under the ignored `test-results` directory: `
 ## Drag feedback follow-up
 
 The visual builder now uses full-tile drag images, a faded source tile, and an accent insertion line. The dedicated `scripts/drag-feedback-test.mjs` passed 15 checks for the drag-image target, rendered source and marker styles, insertion above/below and in both directions, unchanged settings during hover, same-position handling, leaving the builder, and cancellation cleanup. The existing 10 editor checks also passed with coordinate-based drops. The screenshot was inspected in the actual macOS settings renderer. Inputs were synthetic DOM drag events; the OS drag-image appearance under a physical pointer remains unverified. The test temporarily disables background rendering throttling for the disposable Settings window and restores it afterward.
+
+## 0.1.1 changes
+
+Version 0.1.1 was checked on 2026-09-24 with Obsidian 1.13.7 (installer 1.13.7), Electron 43.3.0, and macOS on arm64, in the same `.lab/Title Lab` vault. `npm run package` passed with 20 unit tests. The runtime harness passed 35 checks, including three for deferred settings writes: a four-edit typing burst updated the window title immediately and wrote settings once after the pause, and closing Settings wrote a pending edit immediately. The editor harness passed 10 checks, the drag harness passed 15 checks, and the renderer reload retained the saved format. Harnesses now flush the pending write before reading persisted settings.
+
+The minimum app version is 1.13.0 because the newest public APIs the plugin uses (`PluginSettingTab.getSettingDefinitions`, `ButtonComponent.setDestructive`) are marked `@since 1.13.0` in the Obsidian 1.13.1 type definitions. Runtime behavior was observed only on 1.13.7; versions 1.13.0–1.13.6 were not run.
