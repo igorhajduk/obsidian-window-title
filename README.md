@@ -8,6 +8,8 @@ The default puts the vault first:
 {{vault}} — {{title}}
 ```
 
+![Visual builder with the matching template and a live preview](docs/images/listing/01-visual-builder-dark.png)
+
 Reorder elements, insert fixed text, or add frontmatter properties using the searchable element picker. Dragging uses the full element tile; an accent line marks the exact insertion point before or after a tile. Changes in the builder update the template, and valid template edits update the builder. A preview shows the result for the content window used when settings opened.
 
 ## Elements
