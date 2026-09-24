@@ -34,7 +34,7 @@ Non-file views have a tab title but no file path or frontmatter. Missing values 
 
 Numbers and booleans include `0` and `false`. Scalar lists use commas; structured values use compact JSON. Values render on a single line, and the title is capped at 2,048 Unicode code points. A completely empty result uses the vault name.
 
-An unfinished or invalid template stays in the editor with an explanation. The builder and real titles retain the last valid format until the edit becomes valid. Settings are saved per vault. External settings updates do not silently erase an unfinished edit.
+An unfinished or invalid template stays in the editor with an explanation. The builder and real titles retain the last valid format until the edit becomes valid. Titles update on every edit; settings are written to the vault once typing pauses, and immediately when Settings closes. External settings updates do not silently erase an unfinished edit.
 
 ## Installation
 

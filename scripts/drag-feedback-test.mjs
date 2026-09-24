@@ -36,7 +36,7 @@ check('leaving builder removes insertion marker',!ui.querySelector('.is-drop-bef
 drag(first,'dragend',0);check('cancel clears all drag states',!ui.querySelector('.is-dragging,.is-drag-preview,.is-drop-before,.is-drop-after'));
 check('cancel preserves order',plugin.template==='{{vault}} / {{title}}');
 return {checks,input:'Synthetic DOM drag events; native pointer drag image not physically exercised'};
-}finally{contents.setBackgroundThrottling(throttling);plugin.setTemplate(previous);await plugin.store.settle();}
+}finally{contents.setBackgroundThrottling(throttling);plugin.setTemplate(previous);plugin.flushSave();await plugin.store.settle();}
 `,30000);
 console.log(result);await writeFile('test-results/drag-feedback.json',JSON.stringify(result,null,2)+'\n');
 await writeFile('test-results/drag-feedback.png',Buffer.from((await value('window.__dragShot')).split(',')[1],'base64'));

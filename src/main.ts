@@ -1,4 +1,4 @@
-import { Notice, Plugin, type WorkspaceContainer } from 'obsidian';
+import { debounce, Notice, Plugin, type WorkspaceContainer } from 'obsidian';
 import { decodeSettings, SettingsStore } from './data';
 import { FrontmatterIndex } from './frontmatter-index';
 import { WindowTitleSettings } from './settings';
@@ -6,12 +6,14 @@ import { DEFAULT_TEMPLATE, parseTemplate, renderTitle, type Segment } from './te
 import { TitleController } from './title-controller';
 import { contentContainers, readWindowContext } from './window-context';
 
+// Titles update on every edit; the settings file is written once typing pauses.
+const SAVE_DELAY_MS = 500;
+
 export default class WindowTitlePlugin extends Plugin {
   template = DEFAULT_TEMPLATE;
   segments: Segment[] = parseTemplate(DEFAULT_TEMPLATE);
   loadError: string | null = null;
   saveError: string | null = null;
-  pendingSaves = 0;
   index!: FrontmatterIndex;
   private store!: SettingsStore;
   private readonly controllers = new Map<WorkspaceContainer, TitleController>();
@@ -19,6 +21,9 @@ export default class WindowTitlePlugin extends Plugin {
   private stopped = false;
   private reconcileQueued = false;
   private revision = 0;
+  private pendingSaves = 0;
+  private saveScheduled = false;
+  private readonly persist = debounce(() => this.persistTemplate(), SAVE_DELAY_MS, true);
 
   async onload(): Promise<void> {
     this.store = new SettingsStore(data => this.saveData(data));
@@ -94,11 +99,24 @@ export default class WindowTitlePlugin extends Plugin {
     const segments = parseTemplate(template);
     this.template = template;
     this.segments = segments;
-    this.pendingSaves++;
-    const revision = ++this.revision;
+    this.revision++;
     this.saveError = null;
+    this.saveScheduled = true;
     this.refresh();
-    void this.store.save(template).catch((error: unknown) => {
+    this.persist();
+  }
+
+  get saving(): boolean { return this.saveScheduled || this.pendingSaves > 0; }
+
+  /** Writes a scheduled edit immediately instead of waiting for the typing pause. */
+  flushSave(): void { this.persist.run(); }
+
+  private persistTemplate(): void {
+    if (!this.saveScheduled) return;
+    this.saveScheduled = false;
+    this.pendingSaves++;
+    const revision = this.revision;
+    void this.store.save(this.template).catch((error: unknown) => {
       if (revision === this.revision) this.saveError = error instanceof Error ? error.message : String(error);
     }).finally(() => { this.pendingSaves--; if (!this.stopped) this.notify(); });
   }
@@ -106,10 +124,14 @@ export default class WindowTitlePlugin extends Plugin {
   resetSettings(): void {
     this.loadError = null;
     this.setTemplate(DEFAULT_TEMPLATE);
+    this.flushSave();
     this.reconcile();
   }
 
   async onExternalSettingsChange(): Promise<void> {
+    // The external file is newer than an edit still waiting for the typing pause.
+    this.persist.cancel();
+    this.saveScheduled = false;
     await this.store.settle();
     if (this.stopped) return;
     const revision = this.revision;
@@ -130,6 +152,7 @@ export default class WindowTitlePlugin extends Plugin {
   }
 
   onunload(): void {
+    this.flushSave();
     this.stopped = true;
     for (const controller of this.controllers.values()) controller.dispose();
     this.controllers.clear();

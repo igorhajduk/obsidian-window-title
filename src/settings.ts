@@ -300,8 +300,8 @@ class TitleEditor extends Component {
     if (this.externalPending) this.errorEl.setText('Settings changed outside this editor. Your unfinished text is preserved. Use the last valid format or finish this edit to replace it.');
     this.addButton.disabled = this.invalidDraft;
     this.discardButton.closest('.setting-item')?.toggleClass('is-visible', this.invalidDraft || this.externalPending);
-    this.statusEl.setText(this.plugin.saveError ? `Not saved: ${this.plugin.saveError} Edit again to retry.` : this.plugin.pendingSaves ? 'Saving…' : this.invalidDraft ? 'Unfinished edit is not saved.' : 'Saved for this vault.');
+    this.statusEl.setText(this.plugin.saveError ? `Not saved: ${this.plugin.saveError} Edit again to retry.` : this.plugin.saving ? 'Saving…' : this.invalidDraft ? 'Unfinished edit is not saved.' : 'Saved for this vault.');
   }
 
-  onunload(): void { this.disposed = true; this.endDrag(); this.picker?.close(); this.picker = null; }
+  onunload(): void { this.disposed = true; this.endDrag(); this.picker?.close(); this.picker = null; this.plugin.flushSave(); }
 }

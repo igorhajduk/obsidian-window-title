@@ -77,8 +77,17 @@ try {
   const selected=suggestions.find(x=>x.segment.key==='customer name');picker.onChooseSuggestion(selected);picker.close();await wait(100);
   check('frontmatter insertion updates both editors',textarea().value.endsWith('{{frontmatter["customer name"]}}')&&[...ui().querySelectorAll('.setting-item-name')].some(e=>e.textContent==='customer name'),textarea().value);
   input(textarea(),'{{vault}} — {{title}}');await wait(200);
-  const pending=plugin.pendingSaves;await plugin.store.settle();
+  const pending=plugin.saving;plugin.flushSave();await plugin.store.settle();
   check('persisted template matches editor',plugin.store.confirmed.template===textarea().value,{pending,confirmed:plugin.store.confirmed});
+  const writes=[];const saveData=plugin.saveData.bind(plugin);plugin.saveData=data=>{writes.push(data.template);return saveData(data);};
+  try{
+    for(const text of ['{{title}}','{{title}} ','{{title}} —','{{title}} — {{vault}}'])input(textarea(),text);await wait(50);
+    check('typing updates titles before writing settings',plugin.saving&&!writes.length&&main.getContainer().doc.title===main.getDisplayText()+' — Title Lab',{saving:plugin.saving,writes,title:main.getContainer().doc.title});
+    await wait(700);await plugin.store.settle();
+    check('a typing burst writes settings once',writes.length===1&&writes[0]==='{{title}} — {{vault}}'&&!plugin.saving,writes);
+    input(textarea(),'{{vault}} — {{title}}');app.setting.close();await plugin.store.settle();
+    check('closing settings writes a pending edit immediately',writes.length===2&&writes[1]==='{{vault}} — {{title}}'&&plugin.store.confirmed.template==='{{vault}} — {{title}}',writes);
+  }finally{delete plugin.saveData;}
   app.setting.close();
   const renamed=app.vault.getAbstractFileByPath('Projects/Кириллица 🪟.md');await app.vault.rename(renamed,'Projects/Renamed 🪟.md');await wait(250);
   check('rename updates title',containers[2].doc.title==='Title Lab — Renamed 🪟',containers[2].doc.title);
@@ -89,7 +98,7 @@ try {
   check('enable discovers already open popouts',containers.every(c=>c.doc.title==='Title Lab — '+ws.getMostRecentLeaf(c).getDisplayText()),containers.map(c=>c.doc.title));
   const moving=pops[0];ws.moveLeafToPopout(moving);await wait(250);
   check('moved tab retains shared format',moving.getContainer().doc.title==='Title Lab — Planning',moving.getContainer().doc.title);
-  plugin.setTemplate(previousTemplate);await plugin.store.settle();
+  plugin.setTemplate(previousTemplate);plugin.flushSave();await plugin.store.settle();
   return {checks,platform:process.platform,electron:process.versions.electron};
 } finally {
   app.setting.close();
@@ -97,7 +106,7 @@ try {
   for(const leaf of pops)leaf.detach();
   main.detach();
   if(previousLeaf)ws.setActiveLeaf(previousLeaf,{focus:true});
-  const current=app.plugins.plugins['window-title'];if(current&&current.template!==previousTemplate){current.setTemplate(previousTemplate);await current.store.settle();}
+  const current=app.plugins.plugins['window-title'];if(current&&current.template!==previousTemplate){current.setTemplate(previousTemplate);current.flushSave();await current.store.settle();}
 }
 `, 120000);
 await writeFile('test-results/runtime.json', JSON.stringify(result, null, 2) + '\n');

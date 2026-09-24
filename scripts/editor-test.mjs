@@ -38,7 +38,7 @@ await app.vault.delete(scratch);scratch=null;await wait(300);
 check('deleting renamed file removes last property reference',!(await plugin.index.available()).includes('unique_lab_property'),await plugin.index.available());
 return {checks,event_input:'Synthetic DOM events; physical pointer and system IME not exercised'};
 }finally{
-app.setting.close();plugin.setTemplate(previous);await plugin.store.settle();if(scratch)await app.vault.delete(scratch);if(folder)await app.vault.delete(folder,true);
+app.setting.close();plugin.setTemplate(previous);plugin.flushSave();await plugin.store.settle();if(scratch)await app.vault.delete(scratch);if(folder)await app.vault.delete(folder,true);
 }
 `, 90000);
 await writeFile('test-results/editor.json',JSON.stringify(result,null,2)+'\n');

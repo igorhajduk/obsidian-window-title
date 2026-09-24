@@ -5,7 +5,7 @@ import { evaluate, job, value } from './lab-cli.mjs';
 const template='{{frontmatter["project"]}} — {{vault}} — {{title}}';
 const previous=await value("app.plugins.plugins['window-title'].template");
 try {
-  await job(`app.setting.close();const leaf=app.workspace.getMostRecentLeaf(app.workspace.rootSplit);await leaf.openFile(app.vault.getAbstractFileByPath('Welcome.md'));app.workspace.setActiveLeaf(leaf,{focus:true});const p=app.plugins.plugins['window-title'];p.setTemplate(${JSON.stringify(template)});await p.store.settle();return true;`);
+  await job(`app.setting.close();const leaf=app.workspace.getMostRecentLeaf(app.workspace.rootSplit);await leaf.openFile(app.vault.getAbstractFileByPath('Welcome.md'));app.workspace.setActiveLeaf(leaf,{focus:true});const p=app.plugins.plugins['window-title'];p.setTemplate(${JSON.stringify(template)});p.flushSave();await p.store.settle();return true;`);
   await evaluate("window.__titleLabReloadMarker=true;setTimeout(()=>location.reload(),100);'scheduled guarded vault reload'");
   let current=null;
   for(let attempt=0;attempt<40;attempt++) {
@@ -23,5 +23,5 @@ try {
   await writeFile('test-results/reload.json',JSON.stringify(result,null,2)+'\n');
   console.log(result);
 }finally {
-  await job(`const p=app.plugins.plugins['window-title'];p.setTemplate(${JSON.stringify(previous)});await p.store.settle();return true;`);
+  await job(`const p=app.plugins.plugins['window-title'];p.setTemplate(${JSON.stringify(previous)});p.flushSave();await p.store.settle();return true;`);
 }
